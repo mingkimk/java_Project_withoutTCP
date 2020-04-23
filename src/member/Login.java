@@ -13,6 +13,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import DB.MemberDAO;
+import DB.MemberDTO;
+import manager.Setting;
+import manager.ShoppingMall;
+
 public class Login extends JFrame implements ActionListener {
 	JPanel nP, cP, sP, eP;
 	JLabel idLabel, pwLabel, joinlabel;
@@ -85,72 +90,45 @@ public class Login extends JFrame implements ActionListener {
 	}
 
 	private void loginchk() {
-		loginBtn.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
+	      loginBtn.addActionListener(new ActionListener() {
+	         @Override
+	         public void actionPerformed(ActionEvent e) {
 
-				try {
-					MemberDAO dao = MemberDAO.getInstance();
-					MemberDTO member = dao.loginchk(idField.getText());
-					// MemberDTO result = dao.loginchk2(member);
-					if (idField.getText().equals(member.getId()) && pwdField.getText().equals(member.getPwd())) {
-						JOptionPane.showMessageDialog(null, "로그인 완료");
-						if (member.getLv() == 1) {
-							new ShoppingMall();
-							System.out.println("쇼핑몰창 뜨게하기");
-						} else if (member.getLv() == 5) {
-							System.out.println("관리자창 뜨게 하기 관리자 객체를 관리자의 창으로 보내깅");
-							dispose();
-						}
-					} else {
-						JOptionPane.showMessageDialog(null, "존재하지 않는 아이디거나 비밀번호가 맞지 않습니다.");
-						setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-						idField.setText("");
-						pwdField.setText("");
-					}
+	            try {
+	               MemberDAO dao = MemberDAO.getInstance();
+	               MemberDTO member = dao.loginchk(idField.getText());
+	               if (member != null) {
+	                  if (idField.getText().equals(member.getId()) && pwdField.getText().equals(member.getPwd())) {
+	                     JOptionPane.showMessageDialog(null, "로그인 완료");
+	                     if (member.getLv() == 1) {
+	                        System.out.println("쇼핑몰창 뜨게하기");
+	                        new ShoppingMall();
+	                     } else if (member.getLv() == 5) {
+	                        System.out.println("관리자창 뜨게 하기 관리자 객체를 관리자의 창으로 보내깅");
+	                        new Setting();
+	                        dispose();
+	                     }
+	                  } else {
+	                     JOptionPane.showMessageDialog(null, "존재하지 않는 아이디거나 비밀번호가 맞지 않습니다.");
+	                     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+	                     idField.setText("");
+	                     pwdField.setText("");
+	                  }
+	               } else if (member == null) {
+	                  JOptionPane.showMessageDialog(null, "존재하지 않는 아이디거나 비밀번호가 맞지 않습니다.");
+	                  setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+	                  idField.setText("");
+	                  pwdField.setText("");
+	               }
+	            } catch (Exception e1) {
+	               e1.printStackTrace();
+	            }
 
-				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-
-			}
-
-		});
+	         }
+	      });
 	}
 
-//		loginBtn.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				MemberDTO member = new MemberDTO();
-//				member.setId(idField.getText());
-//				member.setPwd(pwdField.getText());
-//
-//				try {
-//					MemberDAO dao = MemberDAO.getInstance();
-//					Boolean result = dao.Loginchk(member);
-//						if(result==true) {
-////							if(idField.getText().equals(member.getId())&&pwdField.getText().equals(member.getPwd())) {
-//								JOptionPane.showMessageDialog(null, "로그인 완료");
-//							dispose();
-//							new ShoppingMall();
-//							}
-////						}
-//					 else if(result==false){
-//						JOptionPane.showMessageDialog(null, "존재하지 않는 아이디거나 비밀번호가 맞지 않습니다.");
-//						setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-//					 }else {
-//						 JOptionPane.showMessageDialog(null, "id와 비밀 번호가 일치 합니다.");
-//					}
-//				} catch (Exception e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				}
-//
-//			}
-//
-//		});
-//	}
+
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -169,6 +147,7 @@ public class Login extends JFrame implements ActionListener {
 		});
 
 	}
+
 }
 
 //(cObj.equals(joinBtn){

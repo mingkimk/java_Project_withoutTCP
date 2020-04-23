@@ -1,7 +1,4 @@
-package member;
-
-
-
+package manager;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -11,7 +8,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.Vector;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -27,13 +23,14 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
-import manager.GoodsDAO;
-import manager.GoodsDTO;
+import DB.GoodsDAO;
+import DB.GoodsDTO;
+
 
 public class Setting extends JFrame {
 
 	Scanner in = new Scanner(System.in);
-	String header[] = { "이름", "아이디", "상품", "수량", "단가", "총합" };
+	String header[] = { "상품코드", "상품이름", "수량", "가격" };
 	JTabbedPane tabpane = new JTabbedPane();
 	DefaultTableModel tablemodel = new DefaultTableModel(header, 0);
 	JTable table = new JTable(tablemodel);
@@ -45,7 +42,7 @@ public class Setting extends JFrame {
 	JPanel south_north = new JPanel();
 	JPanel south_south = new JPanel();
 
-	JTextField[] txtfield = new JTextField[5];
+	JTextField[] txtfield = new JTextField[4];
 	JTextField tfield = null;
 
 	int modIntRow = -1;
@@ -54,11 +51,10 @@ public class Setting extends JFrame {
 
 	GoodsDAO dao = GoodsDAO.getInstance();
 	GoodsDTO dto = null;
-	ArrayList<String[]> initList = new ArrayList<>();
-	basketlist list = null;
+	ArrayList<String[]> initList = null;
 
-	Setting() {
-		super("관리자용 창");// super의 생성자 호출
+	public Setting() {
+		super("관리자 설정");// super의 생성자 호출
 		Dimension size = new Dimension(600, 400);
 		createpanel();
 		createtb();
@@ -131,13 +127,11 @@ public class Setting extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				String in[] = new String[6];
+				String in[] = new String[4];
 				for (int i = 0; i < txtfield.length; i++) {
 					in[i] = txtfield[i].getText();
 					txtfield[i].setText("");
 				}
-				int sum = Integer.parseInt(in[3]) * Integer.parseInt(in[4]);
-				in[5] = Integer.toString(sum);
 				tablemodel.addRow(in);
 				saveToDB(in);
 			}
@@ -149,16 +143,13 @@ public class Setting extends JFrame {
 		modB.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				String in[] = new String[6];
+				String in[] = new String[4];
 				for (int i = 0; i < txtfield.length; i++) {
 					in[i] = txtfield[i].getText();
 					txtfield[i].setText("");
 				}
-				int sum = Integer.parseInt(in[3]) * Integer.parseInt(in[4]);
-				in[5] = Integer.toString(sum);
 				delTableRow(modIntRow);
 				tablemodel.insertRow(modIntRow, in);
-				dto = new DTO();
 				editToDB(in);
 				modIntRow = -1;
 			}
@@ -170,7 +161,7 @@ public class Setting extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				String in[] = new String[6];
+				String in[] = new String[4];
 				for (int i = 0; i < txtfield.length; i++) {
 					in[i] = txtfield[i].getText();
 					txtfield[i].setText("");
@@ -179,76 +170,60 @@ public class Setting extends JFrame {
 				delTableRow(table.getSelectedRow());
 			}
 		});
-		south_south.add(tfield = new JTextField(15));
-		JButton orderB = new JButton("주문");
-		south_south.add(orderB);
 
-		orderB.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				String in[] = new String[6];
-				for (int i = 0; i < txtfield.length; i++) {
-					in[i] = txtfield[i].getText();
-					txtfield[i].setText("");
-				}
-
-				list = new basketlist();
-				list.initList(in);
-			}
-		});
-
-		JButton orderallB = new JButton("전체주문");
+		JButton orderallB = new JButton("쇼핑몰가기");
 		south_south.add(orderallB);
 
 		orderallB.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				String in[] = new String[6];
+				String in[] = new String[4];
 				for (int i = 0; i < txtfield.length; i++) {
 					in[i] = txtfield[i].getText();
 					txtfield[i].setText("");
+					new ShoppingMall();
 				}
 
-				list = new basketlist();
-				list.init(in);
 			}
 		});
 
 	}
 
 	private void saveToDB(String[] in) {
-		dto = new DTO();
-		dto.setName(in[0]);
-		dto.setId(in[1]);
-		dto.setGoods(in[2]);
-		dto.setCnt(in[3]);
-		dto.setPrice(in[4]);
-		dto.setTotal(in[5]);
+		dto = new GoodsDTO();
+		int code = Integer.parseInt(in[0]);
+		dto.setCode(code);
+		dto.setCname(in[1]);
+		int cnt = Integer.parseInt(in[2]);
+		dto.setCnt(cnt);
+		int price = Integer.parseInt(in[3]);
+		dto.setPrice(price);
 		dao.Insert(dto);
 
 	}
 
 	private void editToDB(String[] in) {
-		dto = new DTO();
-		dto.setName(in[0]);
-		dto.setId(in[1]);
-		dto.setGoods(in[2]);
-		dto.setCnt(in[3]);
-		dto.setPrice(in[4]);
-		dto.setTotal(in[5]);
-		dao.editinfo(dto);
+		dto = new GoodsDTO();
+		int code = Integer.parseInt(in[0]);
+		dto.setCode(code);
+		dto.setCname(in[1]);
+		int cnt = Integer.parseInt(in[2]);
+		dto.setCnt(cnt);
+		int price = Integer.parseInt(in[3]);
+		dto.setPrice(price);
+		dao.Update(dto);
 	}
 
 	private void delToDB(String[] in) {
-		dto = new DTO();
-		dto.setName(in[0]);
-		dto.setId(in[1]);
-		dto.setGoods(in[2]);
-		dto.setCnt(in[3]);
-		dto.setPrice(in[4]);
-		dto.setTotal(in[5]);
+		dto = new GoodsDTO();
+		int code = Integer.parseInt(in[0]);
+		dto.setCode(code);
+		dto.setCname(in[1]);
+		int cnt = Integer.parseInt(in[2]);
+		dto.setCnt(cnt);
+		int price = Integer.parseInt(in[3]);
+		dto.setPrice(price);
 		dao.delinfo(dto);
 	}
 
@@ -273,3 +248,12 @@ public class Setting extends JFrame {
 	}
 
 }
+
+
+
+
+
+
+
+
+

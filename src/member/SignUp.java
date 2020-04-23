@@ -27,6 +27,9 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.Document;
 
+import DB.MemberDAO;
+import DB.MemberDTO;
+
 public class SignUp extends JFrame {
 
 	private JPanel contentPane;
@@ -158,6 +161,21 @@ public class SignUp extends JFrame {
 		btncancel = new JButton("취소");
 		btncancel.setBounds(280, 440, 80, 29);
 		contentPane.add(btncancel);
+
+		btncancel.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				try {
+					JOptionPane.showMessageDialog(null, "회원가입을 취소합니다.");
+					dispose();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+
+		});
 		setSize(500, 600);
 		setVisible(true);
 		// setDefaultCloseOperation(EXIT_ON_CLOSE); //System.exit(0) //프로그램종료
@@ -205,32 +223,32 @@ public class SignUp extends JFrame {
 //
 //			}
 
-				   String[] specialtxt = { "!", "@", "#", "$", "%", "^", "&", "*" };
-		            for (int i = 0; i < specialtxt.length; i++) {
-		               if (tfpwd.getText().indexOf(specialtxt[i])==-1) {
-		                  if (tfpwd.getText().length() < 8 && tfpwd.getText().length() >= 1) {
-		                     chkpwd.setText("특수문자X 8글자 이하입니다.");
-		                     chkpwd.setForeground(new Color(153,000,000));
-		                  } else if (tfpwd.getText().length() >= 8) {
-		                     chkpwd.setText("특수문자X 8글자 이상입니다.");
-		                     chkpwd.setForeground(new Color(153,000,000));
-		                  }
+				String[] specialtxt = { "!", "@", "#", "$", "%", "^", "&", "*" };
+				for (int i = 0; i < specialtxt.length; i++) {
+					if (tfpwd.getText().indexOf(specialtxt[i]) == -1) {
+						if (tfpwd.getText().length() < 8 && tfpwd.getText().length() >= 1) {
+							chkpwd.setText("특수문자X 8글자 이하입니다.");
+							chkpwd.setForeground(new Color(153, 000, 000));
+						} else if (tfpwd.getText().length() >= 8) {
+							chkpwd.setText("특수문자X 8글자 이상입니다.");
+							chkpwd.setForeground(new Color(153, 000, 000));
+						}
 
-		               } else if(tfpwd.getText().indexOf(specialtxt[i])!=-1){
-		                  if (tfpwd.getText().length() < 8 && tfpwd.getText().length() >= 1) {
-		                     chkpwd.setText("특수문자O 8글자 이하입니다.");
-		                     chkpwd.setForeground(new Color(153,000,000));
-		                     break;
-		                  } else if (tfpwd.getText().length() >= 8) {
-		                     chkpwd.setText("사용가능한 비밀번호입니다.");
-		                     chkpwd.setForeground(new Color(000,102,000));
-		                     break;
-		                  }
-		               }
-		               if (tfpwd.getText().isEmpty()) {
-		                  chkpwd.setText("");
-		               }
-		            }
+					} else if (tfpwd.getText().indexOf(specialtxt[i]) != -1) {
+						if (tfpwd.getText().length() < 8 && tfpwd.getText().length() >= 1) {
+							chkpwd.setText("특수문자O 8글자 이하입니다.");
+							chkpwd.setForeground(new Color(153, 000, 000));
+							break;
+						} else if (tfpwd.getText().length() >= 8) {
+							chkpwd.setText("사용가능한 비밀번호입니다.");
+							chkpwd.setForeground(new Color(000, 102, 000));
+							break;
+						}
+					}
+					if (tfpwd.getText().isEmpty()) {
+						chkpwd.setText("");
+					}
+				}
 			}
 
 			@Override
